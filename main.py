@@ -1,30 +1,34 @@
-from app.models.Polls import Poll, PollCreate
+
 from fastapi import FastAPI
+from app.api import polls, votes, danger, exceptions
+from fastapi.exceptions import RequestValidationError
 
-app = FastAPI()
+app = FastAPI(title="Polls API",
+              description="A simple API to create and vote on polls",
+              version="0.1",
+              openapi_tags=[
+                  {
+                      "name": "polls",
+                      "description":"Operations related to creating and viewing polls",
+                  },
+                  {
+                      "name": "danger",
+                      "description":"Operations related to deleting polls",
+                  },
+                  {
+                      "name": "votes",
+                      "description":"Operations related to casting votes",
+                  },
+              ],
+            )
 
+app.add_exception_handler(RequestValidationError, exceptions.custom_validation_exception_handler)
+app.include_router(polls.router, prefix="/polls", tags=["polls"])
+app.include_router(danger.router, prefix="/polls", tags=["danger"])
+app.include_router(votes.router, prefix="/votes", tags=["votes"])
 @app.get("/test")
 def test():
     return {"message:" "hello world"}
 
 
-@app.post("/polls/create")
-def create_poll(poll: PollCreate):
-    # return Poll(
-    #     title="some placeholder title",
-    #     options=["yes","no","maybe"]
-    # )
-    new_poll = poll.create_poll()
     
-    return {
-        "detail": "Poll successfully created",
-        "poll_id": new_poll.uuid,
-        "poll": new_poll
-    }
-    
-from upstash_redis import Redis
-
-redis = Redis(
-    url=
-    token=
-)

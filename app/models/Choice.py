@@ -9,6 +9,6 @@ class ChoiceCreate(BaseModel):
     
 class Choice(ChoiceCreate):
     
-    uuid: UUID = Field(default_factory=uuid4)
+    id: UUID = Field(default_factory=uuid4)
     label: int = Field(ge=1, le=6)
     
